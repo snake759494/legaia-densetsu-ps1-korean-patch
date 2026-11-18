@@ -38,7 +38,7 @@
 6. 배포 파일:
 
 ```powershell
-xdelta3 -e -0 -S none -A -s "Legaia Densetsu (Japan).bin" "Legaia Densetsu (Japan) [KOR].bin" LegaiaDensetsu_PS1_KO_v1.3.xdelta
+xdelta3 -e -0 -S none -A -s "Legaia Densetsu (Japan).bin" "Legaia Densetsu (Japan) [KOR].bin" LegaiaDensetsu_PS1_KO_v1.4.xdelta
 ```
 
 ## 화면 확인

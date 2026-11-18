@@ -30,7 +30,15 @@ def all_hangul(strings):
 STEAL=[(0x69ed9,51,'훔쳐 간 「'),(0x69f0c,20,'」 손에 넣었다!'),(0x69f21,43,'도둑맞은 「'),(0x69f4c,28,'」 되찾았다!'),
        (0x69f69,39,'적이 가진 「'),(0x69f90,20,'」 훔쳤다!'),(0x69fa5,42,'훔쳐 간 아이템을 전부 되찾았다!')]
 import rawtxt,mon
-RAWFIX=[(901,0x17699,'火','화'),(901,0x1769d,'風','풍'),(901,0x176a1,'雷','뇌')]
+RAWFIX=[(901,0x17699,'火','화'),(901,0x1769d,'風','풍'),(901,0x176a1,'雷','뇌'),
+        (900,162351,'たち','일행'),(900,162356,'は戦闘に勝利した！','의 전투 승리! ')]   # 전투 결과 (#2)
+# 추출기가 놓친 대사 줄(Ⅲ 같은 NEC 특수문자·FE 제어코드 포함): (파일, 청크, 길이 바이트 위치, 번역)
+MISSFIX=[(15,1,0x5f31,'「저는 메타.〈라 세루〉입니다.'),
+ (63,2,0x2ed3,'나는 돌크 왕령의 왕, 돌크 3세.'),(72,0,0xf37,'나는 돌크 왕령의 왕 돌크 3세.'),(72,0,0x70b1,' 돌크 3세다.'),
+ (168,2,0x5c6,' 다니살 1세 명으로 건조됐습니다.'),
+ (545,2,0x501e,' {fe0e}개입니다.'),(545,2,0x511b,' {fe0e}개입니다.'),(545,2,0x5535,' {fe0e}개입니다.'),
+ (554,2,0x3254,'에트라8세「{fe00}{fe00}{fe03}{fe01}{fe02}!'),(554,2,0x3587,'에트라8세「{fe00}{fe00}{fe03}{fe01}{fe02}!'),(554,2,0x35e7,'에트라8세「{fe00}{fe00}{fe03}{fe01}{fe02}!'),
+ (564,2,0x50f1,' 보여주려면 {fe03}을 눌러라!'),(564,2,0x5393,'아프로 킹「{fe03}은'),(640,1,0x237a,'  컨트롤러의 {fe02}를')]+ [(564,2,o,'아프로 킹「{fe0b}점이다!') for o in (0x4dc3,0x5027,0x52cd,0x55bf,0x588f)]
 def make_kmap(syl):
     idxs=[i for i in range(1600)]+[i for i in range(1694,1694+1600)]
     assert len(syl)<=len(idxs),len(syl)
@@ -63,7 +71,7 @@ def build(outbin):
     locs=json.load(open(J('text','locs.json')))
     ko=load_ko()
     import misc,arts
-    extra=misc.strings()+['반노아가라테라',misc.NAME1,misc.NAME2]+[k for _,_,_,k in RAWFIX]+[t for _,_,t in STEAL]+rawtxt.strings()+mon.strings()+arts.strings()
+    extra=misc.strings()+['반노아가라테라',misc.NAME1,misc.NAME2]+[k for _,_,_,k in RAWFIX]+[k for *_,k in MISSFIX]+[t for _,_,t in STEAL]+rawtxt.strings()+mon.strings()+arts.strings()
     syl=all_hangul([l for v in ko.values() for l in v]+extra)
     kmap,kidx=make_kmap(syl)
     json.dump({c:'%04x'%v for c,v in kmap.items()},open(J('text','kmap.json'),'w',encoding='utf-8'),ensure_ascii=False)
@@ -96,6 +104,12 @@ def build(outbin):
             if d[pos:end]!=buf: d[pos:end]=buf; changed=True
         if changed: chunk_new[(k,ci)]=bytes(d)
     if bad: print('제약 위반으로 건너뜀',len(bad),sorted(bad)[:20])
+    for k,ci,o,ko_ in MISSFIX:
+        f=fs[k]; kind,ents=classify(f); d=bytearray(chunk_new.get((k,ci)) or get(f,kind,*ents[ci]))
+        n=d[o]; kt=clen(ko_); assert kt<=n,(k,ci,hex(o),ko_,kt,n)
+        b=encode(ko_+'　'*(n-kt),kmap); assert len(b)==2*n
+        d[o+1:o+1+2*n]=b; chunk_new[(k,ci)]=bytes(d)
+    print('누락 대사 수정',len(MISSFIX))
     # --- 이미지 속 일본어 ---
     import imgpatch
     rawtxt.apply(fs,new,kmap)
@@ -148,7 +162,8 @@ def build(outbin):
     misc.name_tables(fs,new,kmap)
     for f,off,ja,ko in RAWFIX:
         b=bytearray(new.get(f,fs[f])); jb=ja.encode('cp932'); kb=encode(ko,kmap)
-        assert b[off:off+len(jb)]==jb and len(kb)==len(jb),(f,off,ko)
+        if b[off:off+len(kb)]==kb: continue
+        assert b[off:off+len(jb)]==jb and len(kb)==len(jb),(f,off,ko,bytes(b[off-4:off+20]).hex())
         b[off:off+len(jb)]=kb; new[f]=bytes(b)
     P=protw.rebuild(new)
     shutil.copy(J('..','Legaia Densetsu (Japan).bin'),outbin)
@@ -216,7 +231,7 @@ def battle_chars():
     for i,e in ja.items():
         src=e['src'] if isinstance(e['src'],list) else [e['src']]
         if any(x=='exe' or (x.startswith('f') and 895<=int(x[1:])<=982) for x in src): S|=H(ko.get(i,''))
-    for v in list(arts.T.values())+mon.strings()+rawtxt.strings()+[t for *_,t in STEAL]+[misc.NAME1,misc.NAME2,'반노아가라']: S|=H(v)
+    for v in list(arts.T.values())+mon.strings()+rawtxt.strings()+[t for *_,t in STEAL]+[t for *_,t in RAWFIX]+[misc.NAME1,misc.NAME2,'반노아가라']: S|=H(v)
     return S
 BASE_TAB=0x80075780  # 기본 글꼴 코드 표(정렬, 400 + 376): 앞 400 = 평면0, 뒤 376 = 평면1
 def battle_font(fs,new,exe,kmap):

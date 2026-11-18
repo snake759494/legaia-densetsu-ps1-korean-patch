@@ -40,6 +40,7 @@ def patch(f):
     for x,y,txt in STATUS:
         m=bold(place(mask(txt,f11,aw,ah),aw-1,ah)); m=np.pad(m,((0,0),(0,1)))
         r=bg.copy()
+        m=m|np.pad(m,((1,0),(0,0)))[:-1]   # 획을 2줄 두께로: 14/15 교대 줄 어느 쪽에서도 보이게
         for yy in range(ah): r[yy][m[yy]]=15 if (y+2+yy)%2==0 else 14
         idx[y+2:y+2+ah,x+2:x+2+aw]=r
     # 무기/손/발 태그: x104..127, y0+3..y0+14
@@ -52,10 +53,15 @@ def patch(f):
             if c: bg[yy,xx]=c.most_common(1)[0][0]
     f7=FONT('Galmuri7.ttf',8)
     for y,txt in TAGS:
-        if len(txt)==2: m=bold(place(mask(txt,f11,tw,th),tw-1,th)); m=np.pad(m,((0,0),(0,1)))
+        if len(txt)==2:
+            # 화면에서 가로로 축소되어 표시되므로 가로를 꽉 채워 늘림(ㅏ 짧은 획 보존), 그림자 자리 1px
+            m0=mask(txt,f11,tw-1,th-1); m0=np.array(Image.fromarray(m0.astype(np.uint8)*255).resize((tw-1,m0.shape[0]),Image.NEAREST))>0
+            m=place(m0,tw-1,th-1); m=np.pad(m,((0,1),(0,1)))
         else: m=place(mask(txt,f7,tw,th),tw,th)
         r=bg.copy()
-        for yy in range(th): r[yy][m[yy]]=1 if (yy%2) else 2
+        # 원본처럼 글자 = 1, 오른쪽·아래 그림자 = 2
+        sh=(np.pad(m,((1,0),(0,0)))[:-1]|np.pad(m,((0,0),(1,0)))[:,:-1]|np.pad(m,((1,0),(1,0)))[:-1,:-1])&~m
+        r[sh]=2; r[m]=1
         idx[y+3:y+3+th,104:104+tw]=r
     # (ラ·セル) → (라세루)
     x0,y0,w,h=0,159,40,14
