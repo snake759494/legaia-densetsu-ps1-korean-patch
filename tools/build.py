@@ -132,10 +132,9 @@ def build(outbin):
     new.update(rawimg)
     # --- 글꼴 ---
     font_tims(fs,new,kmap,kidx)
-    base_font(fs,new)
     # --- 기타 텍스트 / exe ---
     exe=bytearray(open(J('orig','SCPS_100.59'),'rb').read())
-    struct.pack_into('<I',exe,ea(0x8003754c),0x10000017)  # 한자 코드는 항상 전체 폰트 사용
+    battle_font(fs,new,exe,kmap)  # 전투(글자 모드 12)는 기본 글꼴만 씀 → 한글을 기본 글꼴에 배치
     misc.apply(fs,new,exe,kmap)
     misc.apply2(fs,new,exe,kmap)
     from kenc import encode as _enc
@@ -200,5 +199,39 @@ def base_font(fs,new):
     base_put(f,pix,0,0,[(2,8),(2,9),(1,10)])   # 、 → ,
     base_put(f,pix,0,1,[(2,9),(2,10)])          # 。 → .
     new[0]=bytes(f)
+
+def battle_chars():
+    # 전투 중 표시될 수 있는 문자열: 실행파일·전투 파일(895~982) 기타 문자열, 기술·적 이름, 전투 메시지, 이름 입력 음절
+    import misc,arts
+    H=lambda t:{c for c in t if ishangul(c)}
+    ja={};ko={};S=set()
+    for f in glob.glob(J('text','ja','m*.json')):
+        for e in json.load(open(f,encoding='utf-8')): ja[e['id']]=e
+    for f in glob.glob(J('text','ko','m*.json')):
+        for e in json.load(open(f,encoding='utf-8')): ko[e['id']]=e['ko']
+    for i,e in ja.items():
+        src=e['src'] if isinstance(e['src'],list) else [e['src']]
+        if any(x=='exe' or (x.startswith('f') and 895<=int(x[1:])<=982) for x in src): S|=H(ko.get(i,''))
+    for v in list(arts.T.values())+mon.strings()+rawtxt.strings()+[t for *_,t in STEAL]+[misc.NAME1,misc.NAME2,'반노아가라']: S|=H(v)
+    return S
+BASE_TAB=0x80075780  # 기본 글꼴 코드 표(정렬, 400 + 376): 앞 400 = 평면0, 뒤 376 = 평면1
+def battle_font(fs,new,exe,kmap):
+    from PIL import ImageFont
+    o=ea(BASE_TAB); old=[exe[o+2*i]<<8|exe[o+2*i+1] for i in range(776)]
+    keep=[c for c in old if c<0x889f]       # 기호·영숫자·가나
+    kor=sorted(kmap[c] for c in battle_chars())
+    nk=776-len(kor); assert nk>=61,len(kor)  # 기호 61개는 반드시 유지
+    tab=keep[:nk]+kor; assert tab==sorted(tab) and len(set(tab))==776
+    for i,c in enumerate(tab): exe[o+2*i]=c>>8; exe[o+2*i+1]=c&255
+    import gfx
+    f=bytearray(gfx.patch(new.get(0,fs[0]))); pix=0x6774
+    base_put(f,pix,0,0,[(2,8),(2,9),(1,10)])   # 、 → ,
+    base_put(f,pix,0,1,[(2,9),(2,10)])          # 。 → .
+    font=ImageFont.truetype(kfont.FONT,12); inv={v:k for k,v in kmap.items()}
+    for i in range(nk,776):
+        g=kfont.glyph(inv[tab[i]],font)
+        base_put(f,pix,0 if i<400 else 1,i%400,[(x,y) for y in range(12) for x in range(12) if g[y][x]])
+    new[0]=bytes(f)
+    print('전투 글꼴 한글',len(kor),'가나 유지',nk-61)
 
 if __name__=='__main__': build(sys.argv[1])

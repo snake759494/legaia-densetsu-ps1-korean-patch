@@ -1,10 +1,10 @@
 # 레전드 오브 레가이아 PS1 한글패치
 
-PS1 일본판 **レガイア伝説 (Legaia Densetsu, SCPS-10059)**용 비공식 한국어 패치입니다. 필드와 이벤트의 **대사·선택지**를 모두 한국어로 옮겼습니다. **메뉴, 아이템·장비·마법, 전투 메시지, 필살기 이름, 적 이름, 미니게임, 튜토리얼**도 한국어로 바꿨습니다. **전투 UI 라벨, 슬롯머신, 「무투회」 타이틀, 스태프롤 같은 그림 글자**는 한글로 다시 그렸습니다. 현재 배포판은 **v1.0 (2026-11-05)**입니다.
+PS1 일본판 **レガイア伝説 (Legaia Densetsu, SCPS-10059)**용 비공식 한국어 패치입니다. 필드와 이벤트의 **대사·선택지**를 모두 한국어로 옮겼습니다. **메뉴, 아이템·장비·마법, 전투 메시지, 필살기 이름, 적 이름, 미니게임, 튜토리얼**도 한국어로 바꿨습니다. **전투 UI 라벨, 슬롯머신, 「무투회」 타이틀, 스태프롤 같은 그림 글자**는 한글로 다시 그렸습니다. 현재 배포판은 **v1.1 (2026-11-18)**입니다.
 
 [패치 다운로드](https://github.com/snake759494/legaia-densetsu-ps1-korean-patch/releases/latest) · [기술 설명](docs/TECHNICAL.md) · [재빌드](docs/BUILD.md) · [변경 기록](CHANGELOG.md) · [권리 안내](RIGHTS.md)
 
-릴리즈에는 한글패치 **LegaiaDensetsu_PS1_KO_v1.0.xdelta** 하나만 첨부합니다. 저장소에는 제작 도구와 기술 문서만 공개합니다. 다음은 포함하지 않습니다.
+릴리즈에는 한글패치 **LegaiaDensetsu_PS1_KO_v1.1.xdelta** 하나만 첨부합니다. 저장소에는 제작 도구와 기술 문서만 공개합니다. 다음은 포함하지 않습니다.
 
 - 원본·완성 디스크 이미지와 추출한 게임 파일
 - 일본어 원문과 번역 대본
@@ -28,11 +28,11 @@ GitHub가 자동으로 만드는 Source code ZIP/TAR는 저장소 소스를 압�
 | **원본 BIN MD5** | `e6cb8e42797aea85c0771044db12d575` |
 | 원본 BIN SHA-1 | `49440bc2b060fe54079253f8e309abd54100278a` |
 | 원본 BIN SHA-256 | `b0d18d8fd3b414c7c040ff9cfaf71955831c557e0122dc0dd620b683543e216c` |
-| xdelta 파일 크기 | 12,961,318 바이트 |
-| xdelta SHA-256 | `a0f5afcf51eeddf5daf84883ce70983ea62fab34982893d45ada8337bec04029` |
+| xdelta 파일 크기 | 12,997,622 바이트 |
+| xdelta SHA-256 | `3401f8ca2c4f90d5f88fb2a2fc53616fb9c567132d63a5f02d1d249167ab2a17` |
 | 적용 결과 BIN 크기 | 467,443,536 바이트 (원본과 같음) |
-| 적용 결과 BIN SHA-1 | `df97cb1a6cc0bb4ea4a40271f375030b1992e4f5` |
-| 적용 결과 BIN SHA-256 | `dc23b22eca97e893042c8dc74c704f029f20191cf11cf2361d2f035ac18fe46c` |
+| 적용 결과 BIN SHA-1 | `d7216027c57d059208400bfad7ef03c40c64472f` |
+| 적용 결과 BIN SHA-256 | `8f2f7ce195adf435bce5835efb817fcb6f545c6118a082f4c668f03398dd4e28` |
 
 원본 게임 파일은 사용자가 직접 준비해야 합니다.
 
@@ -48,7 +48,7 @@ Get-FileHash -Algorithm MD5 -LiteralPath '.\Legaia Densetsu (Japan).bin'
 
 ### xdelta UI 사용
 
-1. 릴리즈에서 `LegaiaDensetsu_PS1_KO_v1.0.xdelta`를 받습니다.
+1. 릴리즈에서 `LegaiaDensetsu_PS1_KO_v1.1.xdelta`를 받습니다.
 2. xdelta3 패치를 지원하는 도구에서 **Apply Patch** 기능을 엽니다.
 3. **Patch**에는 xdelta 파일을, **Source File**에는 해시가 일치하는 원본 `.bin`을 선택합니다.
 4. **Output File**에는 새 파일 이름을 지정합니다(예: `Legaia Densetsu (Korean).bin`).
@@ -65,13 +65,13 @@ xdelta 파일은 호환성을 위해 압축, 2차 압축, 파일 경로 헤더�
 ### 명령줄 사용
 
 ```powershell
-.\xdelta3.exe -d -s '.\Legaia Densetsu (Japan).bin' '.\LegaiaDensetsu_PS1_KO_v1.0.xdelta' '.\Legaia Densetsu (Korean).bin'
+.\xdelta3.exe -d -s '.\Legaia Densetsu (Japan).bin' '.\LegaiaDensetsu_PS1_KO_v1.1.xdelta' '.\Legaia Densetsu (Korean).bin'
 ```
 
 해시 검사와 CUE 생성까지 자동으로 해 주는 도구도 있습니다. Python 3과 xdelta3가 필요합니다. 같은 이름의 출력 파일이 이미 있으면 덮어쓰지 않습니다.
 
 ```powershell
-python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Densetsu (Japan).bin' --patch '.\LegaiaDensetsu_PS1_KO_v1.0.xdelta' --output '.\Legaia Densetsu (Korean).bin'
+python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Densetsu (Japan).bin' --patch '.\LegaiaDensetsu_PS1_KO_v1.1.xdelta' --output '.\Legaia Densetsu (Korean).bin'
 ```
 
 ### 실행
@@ -85,7 +85,7 @@ python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Denset
 | 대사 | 필드·이벤트 대사와 선택지 런 11,456개(약 26,700줄) |
 | 짧은 문자열 | 메뉴·아이템·장비·마법·전투 메시지·미니게임 등 약 1,600개 |
 | 전투 | 필살기 이름 62개, 적 이름 186개(압축 데이터 안)<br>훔치기 메시지, 보스 대사, 필살기 습득·소환 레벨 상승 알림, 전투 튜토리얼 |
-| 글꼴 | 갈무리11 한글 1,162자(게임 한자 글꼴 영역에 배치) |
+| 글꼴 | 갈무리11 한글 1,162자(게임 한자 글꼴 영역에 배치)<br>전투용 기본 글꼴에 전투 문자열·이름 입력 음절 660자 별도 배치 |
 | 그림 글자 | 전투 UI 상태 이상·장비 라벨<br>슬롯머신 화면, 「무투회」 타이틀, 상태 이상 아이콘<br>스태프롤 26장(직책·캐릭터 이름·회사 이름) |
 
 게임 데이터 대부분이 들어 있는 `PROT.DAT`는 청크마다 LZSS로 압축되어 있습니다. 번역을 넣고 다시 압축해서 커진 파일은 뒤 파일들을 밀어 배치하고 TOC를 고쳤습니다. 자세한 내용은 [docs/TECHNICAL.md](docs/TECHNICAL.md)를 참고하세요.
@@ -101,11 +101,11 @@ python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Denset
 - 음성과 무비
 - 제작사 로고·저작권 표기
 - 스태프롤의 실명
-- 화면에 나오지 않는 스크립트 디버그 라벨, 사운드 테스트 메뉴 일부, 이름 입력 원본 표
+- 화면에 나오지 않는 스크립트 디버그 라벨, 사운드 테스트 메뉴 일부, 이름 입력 원본 표(전투용 글꼴에 한글 자리를 만들려고 가나 일부를 뺐기 때문에, 남은 일본어 문구는 일부 글자가 비어 보일 수 있습니다)
 
 ## 알려진 한계
 
-- 모든 화면을 직접 확인하지는 못했습니다. 프롤로그, 이름 입력, 선택지, 대화창, 메뉴는 에뮬레이터로 확인했고 잘리는 곳이 없었습니다. 전투 화면(전투 메시지·적 이름)은 데이터 수준에서만 검증했습니다. 칸을 넘치거나 어긋난 문구가 있으면 이슈로 알려 주세요.
+- 모든 화면을 직접 확인하지는 못했습니다. 프롤로그, 이름 입력, 선택지, 대화창, 메뉴는 에뮬레이터로 확인했고 잘리는 곳이 없었습니다. 전투용 글꼴은 대화창을 전투 글자 모드로 바꿔 확인했고, 실제 전투 화면은 아직 직접 보지 못했습니다. 칸을 넘치거나 어긋난 문구가 있으면 이슈로 알려 주세요.
 - 원문 자리에 덮어쓰므로, 몇몇 문장은 원문보다 짧게 줄였습니다.
 - 인게임 확인은 DuckStation으로 했습니다. 실기에서의 동작은 확인하지 못했습니다.
 

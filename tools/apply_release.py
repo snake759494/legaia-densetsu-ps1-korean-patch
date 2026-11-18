@@ -1,5 +1,5 @@
 """릴리즈 xdelta 를 해시 검사 후 적용.
-사용: python tools/apply_release.py --xdelta xdelta3.exe --source "Legaia Densetsu (Japan).bin" --patch LegaiaDensetsu_PS1_KO_v1.0.xdelta --output "Legaia Densetsu (Korean).bin"
+사용: python tools/apply_release.py --xdelta xdelta3.exe --source "Legaia Densetsu (Japan).bin" --patch LegaiaDensetsu_PS1_KO_v1.1.xdelta --output "Legaia Densetsu (Korean).bin"
 """
 import argparse, hashlib, json, os, subprocess, sys
 
