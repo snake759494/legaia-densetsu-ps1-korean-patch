@@ -53,3 +53,20 @@ def patch_raw(d,o,w,h,fn):
     ix=np.zeros((h,w),np.uint8); ix[:,0::2]=b&15; ix[:,1::2]=b>>4
     fn(ix); nb=(ix[:,0::2]|(ix[:,1::2]<<4)).astype(np.uint8).tobytes()
     d[o:o+len(nb)]=nb; return bytes(d)
+
+# 「うひょ!」 손글씨(8bpp, 인덱스 12, 1px 선) → 「우효!」
+def p_uhyo(ix):
+    import numpy as np
+    from PIL import Image,ImageDraw
+    from skimage.morphology import skeletonize
+    from imgutil import font
+    y0,y1,x0,x1=152,187,86,150
+    ix[y0:y1+1,x0:x1+1]=0
+    S=4; W=(x1-x0+1); H=(y1-y0+1)
+    im=Image.new('L',(W*S,H*S),0); dr=ImageDraw.Draw(im)
+    f=font('SeoulHangangL.ttf',26*S); t='우효!'
+    bb=dr.textbbox((0,0),t,font=f)
+    dr.text(((W*S-(bb[2]-bb[0]))//2-bb[0],(H*S-(bb[3]-bb[1]))//2-bb[1]),t,font=f,fill=255)
+    m=np.array(im.resize((W,H),Image.BOX))>90
+    ix[y0:y1+1,x0:x1+1][skeletonize(m)]=12
+PATCHES+=[('f702',36400,p_uhyo),('f703',39168,p_uhyo)]

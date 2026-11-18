@@ -1,10 +1,10 @@
 # 레전드 오브 레가이아 PS1 한글패치
 
-PS1 일본판 **レガイア伝説 (Legaia Densetsu, SCPS-10059)**용 비공식 한국어 패치입니다. 필드와 이벤트의 **대사·선택지**를 모두 한국어로 옮겼습니다. **메뉴, 아이템·장비·마법, 전투 메시지, 필살기 이름, 적 이름, 미니게임, 튜토리얼**도 한국어로 바꿨습니다. **전투 UI 라벨, 슬롯머신, 「무투회」 타이틀, 스태프롤 같은 그림 글자**는 한글로 다시 그렸습니다. 현재 배포판은 **v1.2 (2026-11-18)**입니다.
+PS1 일본판 **レガイア伝説 (Legaia Densetsu, SCPS-10059)**용 비공식 한국어 패치입니다. 필드와 이벤트의 **대사·선택지**를 모두 한국어로 옮겼습니다. **메뉴, 아이템·장비·마법, 전투 메시지, 필살기 이름, 적 이름, 미니게임, 튜토리얼**도 한국어로 바꿨습니다. **전투 UI 라벨, 슬롯머신, 「무투회」 타이틀, 스태프롤 같은 그림 글자**는 한글로 다시 그렸습니다. 현재 배포판은 **v1.3 (2026-11-18)**입니다.
 
 [패치 다운로드](https://github.com/snake759494/legaia-densetsu-ps1-korean-patch/releases/latest) · [기술 설명](docs/TECHNICAL.md) · [재빌드](docs/BUILD.md) · [변경 기록](CHANGELOG.md) · [권리 안내](RIGHTS.md)
 
-릴리즈에는 한글패치 **LegaiaDensetsu_PS1_KO_v1.2.xdelta** 하나만 첨부합니다. 저장소에는 제작 도구와 기술 문서만 공개합니다. 다음은 포함하지 않습니다.
+릴리즈에는 한글패치 **LegaiaDensetsu_PS1_KO_v1.3.xdelta** 하나만 첨부합니다. 저장소에는 제작 도구와 기술 문서만 공개합니다. 다음은 포함하지 않습니다.
 
 - 원본·완성 디스크 이미지와 추출한 게임 파일
 - 일본어 원문과 번역 대본
@@ -28,11 +28,11 @@ GitHub가 자동으로 만드는 Source code ZIP/TAR는 저장소 소스를 압�
 | **원본 BIN MD5** | `e6cb8e42797aea85c0771044db12d575` |
 | 원본 BIN SHA-1 | `49440bc2b060fe54079253f8e309abd54100278a` |
 | 원본 BIN SHA-256 | `b0d18d8fd3b414c7c040ff9cfaf71955831c557e0122dc0dd620b683543e216c` |
-| xdelta 파일 크기 | 13,267,694 바이트 |
-| xdelta SHA-256 | `5a7a1bb84d2a709f66a5c6efd173fc97a2e0180fbc0a3d1d2b94f4c26130684b` |
+| xdelta 파일 크기 | 13,270,003 바이트 |
+| xdelta SHA-256 | `58cbbb02075ad386905e13f09298e0a3efee7918d7755a5ea12bdf9c7bbefbfe` |
 | 적용 결과 BIN 크기 | 467,443,536 바이트 (원본과 같음) |
-| 적용 결과 BIN SHA-1 | `fd631cbe51b8c8287c96999371276b3930cb8553` |
-| 적용 결과 BIN SHA-256 | `a46fd73f045758e69980178a7182269ca37f75dba7bf16e718038775c34d7e6c` |
+| 적용 결과 BIN SHA-1 | `c9592f4db672ab509582098ea9a9d21508704a4f` |
+| 적용 결과 BIN SHA-256 | `185229e953a1d44a8b64912914e6bf531dbb98d0e196029c8da4af9f7ca038d7` |
 
 원본 게임 파일은 사용자가 직접 준비해야 합니다.
 
@@ -48,7 +48,7 @@ Get-FileHash -Algorithm MD5 -LiteralPath '.\Legaia Densetsu (Japan).bin'
 
 ### xdelta UI 사용
 
-1. 릴리즈에서 `LegaiaDensetsu_PS1_KO_v1.2.xdelta`를 받습니다.
+1. 릴리즈에서 `LegaiaDensetsu_PS1_KO_v1.3.xdelta`를 받습니다.
 2. xdelta3 패치를 지원하는 도구에서 **Apply Patch** 기능을 엽니다.
 3. **Patch**에는 xdelta 파일을, **Source File**에는 해시가 일치하는 원본 `.bin`을 선택합니다.
 4. **Output File**에는 새 파일 이름을 지정합니다(예: `Legaia Densetsu (Korean).bin`).
@@ -65,13 +65,13 @@ xdelta 파일은 호환성을 위해 압축, 2차 압축, 파일 경로 헤더�
 ### 명령줄 사용
 
 ```powershell
-.\xdelta3.exe -d -s '.\Legaia Densetsu (Japan).bin' '.\LegaiaDensetsu_PS1_KO_v1.2.xdelta' '.\Legaia Densetsu (Korean).bin'
+.\xdelta3.exe -d -s '.\Legaia Densetsu (Japan).bin' '.\LegaiaDensetsu_PS1_KO_v1.3.xdelta' '.\Legaia Densetsu (Korean).bin'
 ```
 
 해시 검사와 CUE 생성까지 자동으로 해 주는 도구도 있습니다. Python 3과 xdelta3가 필요합니다. 같은 이름의 출력 파일이 이미 있으면 덮어쓰지 않습니다.
 
 ```powershell
-python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Densetsu (Japan).bin' --patch '.\LegaiaDensetsu_PS1_KO_v1.2.xdelta' --output '.\Legaia Densetsu (Korean).bin'
+python tools/apply_release.py --xdelta '.\xdelta3.exe' --source '.\Legaia Densetsu (Japan).bin' --patch '.\LegaiaDensetsu_PS1_KO_v1.3.xdelta' --output '.\Legaia Densetsu (Korean).bin'
 ```
 
 ### 실행

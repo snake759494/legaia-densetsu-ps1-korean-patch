@@ -1,17 +1,17 @@
 {
- "version": "v1.2",
+ "version": "v1.3",
  "date": "2026-11-18",
  "game": "Legaia Densetsu (Japan) / SCPS-10059 / PS1 (CD, BIN/CUE 단일 트랙)",
- "asset": "LegaiaDensetsu_PS1_KO_v1.2.xdelta",
- "asset_size": 13267694,
- "asset_sha256": "5a7a1bb84d2a709f66a5c6efd173fc97a2e0180fbc0a3d1d2b94f4c26130684b",
+ "asset": "LegaiaDensetsu_PS1_KO_v1.3.xdelta",
+ "asset_size": 13270003,
+ "asset_sha256": "58cbbb02075ad386905e13f09298e0a3efee7918d7755a5ea12bdf9c7bbefbfe",
  "xdelta_options": "xdelta3 -e -0 -S none -A (no compression, no secondary compression, no application header)",
  "source_bin_size": 467443536,
  "source_bin_md5": "e6cb8e42797aea85c0771044db12d575",
  "source_bin_sha1": "49440bc2b060fe54079253f8e309abd54100278a",
  "source_bin_sha256": "b0d18d8fd3b414c7c040ff9cfaf71955831c557e0122dc0dd620b683543e216c",
  "output_bin_size": 467443536,
- "output_bin_md5": "06538237c4b2e1178ffd3b34307f5ed7",
- "output_bin_sha1": "fd631cbe51b8c8287c96999371276b3930cb8553",
- "output_bin_sha256": "a46fd73f045758e69980178a7182269ca37f75dba7bf16e718038775c34d7e6c"
+ "output_bin_md5": "25fed3ecc76578d5d2534d2ff7c010ab",
+ "output_bin_sha1": "c9592f4db672ab509582098ea9a9d21508704a4f",
+ "output_bin_sha256": "185229e953a1d44a8b64912914e6bf531dbb98d0e196029c8da4af9f7ca038d7"
 }
