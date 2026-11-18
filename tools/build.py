@@ -108,7 +108,11 @@ def build(outbin):
             chunk_new[(k,ci)]=imgpatch.patch_bytes(base,o,fn)
         else:
             k=int(src[1:]); rawimg[k]=imgpatch.patch_bytes(rawimg.get(k,fs[k]),o,fn)
-    print('이미지 수정',len(imgpatch.PATCHES))
+    for src,o,w,h,fn in imgpatch.RAWPATCHES:
+        k,ci=map(int,src[1:].split('.')); f=fs[k]; kind,ents=classify(f)
+        base=chunk_new.get((k,ci)) or get(f,kind,*ents[ci])
+        chunk_new[(k,ci)]=imgpatch.patch_raw(base,o,w,h,fn)
+    print('이미지 수정',len(imgpatch.PATCHES)+len(imgpatch.RAWPATCHES))
     for k in sorted(set(k for k,ci in chunk_new)):
         f=fs[k]; kind,ents=classify(f)
         if kind=='raw':

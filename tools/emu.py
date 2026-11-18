@@ -58,7 +58,10 @@ class Emu:
     def cmd(s,c):
         s._send(c); return s._recv()
     def halt(s):
-        s.sock.sendall(b'\x03'); s._recv()
+        for _ in range(5):
+            try: s.sock.sendall(b'\x03'); s._recv(); return
+            except TimeoutError: pass
+        raise TimeoutError('halt')
     def cont(s):
         s._send('c')
     def read(s,addr,n):
@@ -145,3 +148,14 @@ def hold(e,k,sec):
     for h in e.hwnds: u32.PostMessageW(h,0x100,vk,1|(sc<<16)|ext)
     time.sleep(sec)
     for h in e.hwnds: u32.PostMessageW(h,0x101,vk,1|(sc<<16)|ext|0xC0000000)
+
+def combo(e,keys,sec=0.3):
+    import time
+    e.refresh(); ms=[]
+    for k in keys:
+        vk=VK[k]; sc=u32.MapVirtualKeyW(vk,0); ext=0x01000000 if vk in (0x25,0x26,0x27,0x28) else 0; ms.append((vk,sc,ext))
+        for h in e.hwnds: u32.PostMessageW(h,0x100,vk,1|(sc<<16)|ext)
+        time.sleep(0.05)
+    time.sleep(sec)
+    for vk,sc,ext in ms:
+        for h in e.hwnds: u32.PostMessageW(h,0x101,vk,1|(sc<<16)|ext|0xC0000000)

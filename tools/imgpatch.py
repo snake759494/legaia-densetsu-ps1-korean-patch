@@ -32,3 +32,24 @@ def patch_bytes(d,o,fn):
     d=bytearray(d); t=tim.parse(bytes(d),o); ix=indices(t); fn(ix); nb=pack_ix(t,ix)
     p=bytes(d).find(t['pix'],o); assert p>=0 and len(nb)==len(t['pix'])
     d[p:p+len(nb)]=nb; return bytes(d)
+
+# 헤더 없는 4bpp 원시 블록: (청크, 픽셀 시작, 폭px, 높이, 함수)
+def p_prologue(ix):
+    # 프롤로그 「〈獣〉(セル)であった。」 → 「〈세루〉였다.」 (팔레트는 모두 흰색, 인덱스 = 밝기)
+    import numpy as np
+    from PIL import Image,ImageDraw
+    from imgutil import font
+    h,w=ix.shape; S=4
+    im=Image.new('L',(w*S,h*S),0); dr=ImageDraw.Draw(im)
+    f=font('NanumSquareNeo-dEb.ttf',16*S); t='<세루>였다.'
+    bb=dr.textbbox((0,0),t,font=f); tw=bb[2]-bb[0]
+    dr.text(((w*S-tw)//2-bb[0],14*S-bb[1]),t,font=f,fill=255)
+    a=np.array(im.resize((w,h),Image.LANCZOS)).astype(int)
+    ix[:,:]=np.clip((a+8)//17,0,15)
+RAWPATCHES=[('f751.0',0x1ec90,112,32,p_prologue)]
+def patch_raw(d,o,w,h,fn):
+    import numpy as np
+    d=bytearray(d); b=np.frombuffer(bytes(d[o:o+w*h//2]),np.uint8).reshape(h,w//2)
+    ix=np.zeros((h,w),np.uint8); ix[:,0::2]=b&15; ix[:,1::2]=b>>4
+    fn(ix); nb=(ix[:,0::2]|(ix[:,1::2]<<4)).astype(np.uint8).tobytes()
+    d[o:o+len(nb)]=nb; return bytes(d)

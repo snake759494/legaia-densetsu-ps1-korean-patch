@@ -1,6 +1,6 @@
 # usage: play.py state|- "seq" outprefix [cue]
 # tokens: Maddr:hex RAM write, wN sleep, S shot, SAVE savestate(slot1), Dfile RAM dump, hK:sec hold, other=key press
-import sys,time,os; sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); from emu import Emu,hold
+import sys,time,os; sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); from emu import Emu,hold,combo
 st=None if sys.argv[1]=='-' else sys.argv[1]
 cue=sys.argv[4] if len(sys.argv)>4 else '../Legaia Densetsu (Japan).cue'
 e=Emu(cue,state=st); time.sleep(2)
@@ -15,6 +15,17 @@ try:
             e.savestate(); time.sleep(2.5)
             if os.path.exists(sv) and os.path.getmtime(sv)>t0: break
         print('saved')
+    elif tok=='DBG':
+        import emu
+        e.refresh()
+        def kd(k,up=False):
+            vk=emu.VK[k]; sc=emu.u32.MapVirtualKeyW(vk,0)
+            for h in e.hwnds: emu.u32.PostMessageW(h,0x101 if up else 0x100,vk,1|(sc<<16)|(0xC0000000 if up else 0))
+        kd('select')
+        for _ in range(1):
+            e.write(0x8007d51f,b''); time.sleep(0.05); e.write(0x8007d51f,b''); kd('start'); time.sleep(0.1); kd('start',True); time.sleep(0.2)
+        kd('select',True)
+    elif '+' in tok: combo(e,tok.split('+'),0.6)
     elif tok.startswith('M') and ':' in tok:
         a,h=tok[1:].split(':'); e.write(int(a,16),bytes.fromhex(h))
     elif tok.startswith('D'): open(tok[1:],'wb').write(e.read(0x80000000,0x200000))
